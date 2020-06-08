@@ -1,100 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-  
+
+<head>
+
     <script>
 
-var items = [0, 1, 2, 3, 4, 5, 6, "wd", "nb", "out"];
-var team = {
-    teamA: {
-        ballsFaced: 0,
-        runsScored: 0,
-        wicketsDown: 0,
-        inningsCompleted:false,
-        lastSixBalls:[]
-    },
-    teamB: {
-        ballsFaced: 0,
-        runsScored: 0,
-        wicketsDown: 0,
-        inningsCompleted:false,
-        lastSixBalls:[]
-        
-    }
-}
+        var items = [0, 1, 2, 3, 4, 5, 6, "wd", "nb", "out"];
+        var team = {
+            teamA: {
+                ballsFaced: 0,
+                runsScored: 0,
+                wicketsDown: 0,
+                inningsCompleted: false,
+                lastSixBalls: []
+            },
+            teamB: {
+                ballsFaced: 0,
+                runsScored: 0,
+                wicketsDown: 0,
+                inningsCompleted: false,
+                lastSixBalls: []
 
-
-var timeout;
-function startGame(teamtype) {
-    statusX=false;
-    timeout = setInterval(function () {
-        var item = items[Math.floor(Math.random() * items.length)];
-        team[teamtype].lastSixBalls.unshift(item);
-        if(team.teamB.runsScored>team.teamA.runsScored){
-            team.teamB.inningsCompleted=true;
-            clearInterval(timeout);
-        }
-        if (item == "wd" || item == "nb") {
-            team[teamtype].runsScored = team[teamtype].runsScored + 1;
-        } else if (item == "out") {
-            team[teamtype].wicketsDown = team[teamtype].wicketsDown + 1;
-            team[teamtype].ballsFaced = team[teamtype].ballsFaced + 1;
-            if (team[teamtype].wicketsDown == 10) {
-                clearInterval(timeout);
-                team[teamtype].inningsCompleted=true;
-                enable(1);
-                (team.teamA.inningsCompleted && team.teamB.inningsCompleted)?document.getElementById("result").innerHTML = (team.teamA.runsScored==team.teamB.runsScored)?"Match Drawn":((team.teamA.runsScored>team.teamB.runsScored)?"Team A Won the match":"Team B Won the match"):"";
             }
-        } else {
-            team[teamtype].runsScored = team[teamtype].runsScored + item;
-            team[teamtype].ballsFaced = team[teamtype].ballsFaced + 1;
         }
-        if (team[teamtype].ballsFaced == 120) {
-            clearInterval(timeout);
-            team[teamtype].inningsCompleted=true;
-            enable(1);
-            (team.teamA.inningsCompleted && team.teamB.inningsCompleted)?document.getElementById("result").innerHTML = (team.teamA.runsScored==team.teamB.runsScored)?"Match Drawn":((team.teamA.runsScored>team.teamB.runsScored)?"Team A Won the match":"Team B Won the match"):"";
+
+
+        var timeout;
+        function showResult() {
+            const { teamA, teamB } = team;
+            (teamA.inningsCompleted && teamB.inningsCompleted) ? document.getElementById("result").innerHTML = (teamA.runsScored == teamB.runsScored) ? "Match Drawn" : ((teamA.runsScored > teamB.runsScored) ? "Team A Won the match" : "Team B Won the match") : "";
         }
-        document.getElementById("scoreA").innerHTML = team.teamA.runsScored+"/"+team.teamA.wicketsDown;
-        document.getElementById("lastSixA").innerHTML = team.teamA.lastSixBalls.slice(0,6).join("|");
-        document.getElementById("lastSixB").innerHTML = team.teamB.lastSixBalls.slice(0,6).join("|");
-        document.getElementById("scoreB").innerHTML = team.teamB.runsScored+"/"+team.teamB.wicketsDown;
-        document.getElementById("oversA").innerHTML = Math.floor(team.teamA.ballsFaced/6)+"."+(team.teamA.ballsFaced%6);
-        document.getElementById("oversB").innerHTML = Math.floor(team.teamB.ballsFaced/6)+"."+(team.teamB.ballsFaced%6);
-       
-    },1000)
-}
-var statusX=true;
-function stopGame() {
-    statusX=true;
-    if (timeout) {
-        clearInterval(timeout)
-    }
+        function startGame(teamtype) {
+            const { teamA, teamB } = team;
+            statusX = false;
+            timeout = setInterval(function () {
+                var item = items[Math.floor(Math.random() * items.length)];
+                team[teamtype].lastSixBalls.unshift(item);
+                if (teamB.runsScored > teamA.runsScored) {
+                    teamB.inningsCompleted = true;
+                    clearInterval(timeout);
+                    showResult();
+                   
+                }
+                if (item == "wd" || item == "nb") {
+                    team[teamtype].runsScored = team[teamtype].runsScored + 1;
+                } else if (item == "out") {
+                    team[teamtype].wicketsDown = team[teamtype].wicketsDown + 1;
+                    team[teamtype].ballsFaced = team[teamtype].ballsFaced + 1;
+                    if (team[teamtype].wicketsDown == 10) {
+                        clearInterval(timeout);
+                        team[teamtype].inningsCompleted = true;
+                        enable(1);
+                        showResult();
+                        
+                    }
+                } else {
+                    team[teamtype].runsScored = team[teamtype].runsScored + item;
+                    team[teamtype].ballsFaced = team[teamtype].ballsFaced + 1;
+                }
+                if (team[teamtype].ballsFaced == 120) {
+                    clearInterval(timeout);
+                    team[teamtype].inningsCompleted = true;
+                    enable(1);
+                    showResult()
+                }
+                document.getElementById("scoreA").innerHTML = teamA.runsScored + "/" + teamA.wicketsDown;
+                document.getElementById("lastSixA").innerHTML = teamA.lastSixBalls.slice(0, 6).join("|");
+                document.getElementById("lastSixB").innerHTML = teamB.lastSixBalls.slice(0, 6).join("|");
+                document.getElementById("scoreB").innerHTML = teamB.runsScored + "/" + teamB.wicketsDown;
+                document.getElementById("oversA").innerHTML = Math.floor(teamA.ballsFaced / 6) + "." + (teamA.ballsFaced % 6);
+                document.getElementById("oversB").innerHTML = Math.floor(teamB.ballsFaced / 6) + "." + (teamB.ballsFaced % 6);
+                document.getElementById("runRateA").innerHTML =isNaN(teamA.ballsFaced>5?( teamA.runsScored/(teamA.ballsFaced / 6)).toFixed(2):(teamA.runsScored*6/teamA.ballsFaced).toFixed(2))?"0":teamA.ballsFaced>5?( teamA.runsScored/(teamA.ballsFaced / 6)).toFixed(2):(teamA.runsScored*6/teamA.ballsFaced).toFixed(2);
+                document.getElementById("runRateB").innerHTML=isNaN(teamB.ballsFaced>5?( teamB.runsScored/(teamB.ballsFaced / 6)).toFixed(2):(teamB.runsScored*6/teamB.ballsFaced).toFixed(2))?"0":teamB.ballsFaced>5?( teamB.runsScored/(teamB.ballsFaced / 6)).toFixed(2):(teamB.runsScored*6/teamB.ballsFaced).toFixed(2);
 
-}
-function enable(start){
-    clearInterval(timeout)  
-if(statusX || start)
-startGame((team.teamA.inningsCompleted?'teamB':'teamA'))
-else
-stopGame()
+            }, 1000)
+        }
+        var statusX = true;
+        function stopGame() {
+            statusX = true;
+            if (timeout) {
+                clearInterval(timeout)
+            }
 
-}
+        }
+        function enable(start) {
+            const { teamA, teamB } = team;
+            document.getElementById("playButton").innerHTML = !statusX?"Start":"Stop";
+            clearInterval(timeout)
+            if (statusX || start)
+                startGame((teamA.inningsCompleted ? 'teamB' : 'teamA'))
+            else
+                stopGame()
+
+        }
     </script>
     <title>React App</title>
-  </head>
-  <body>
+</head>
+
+<body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root">
-<div><h1>Team A</h1></div>
-<h3 > score:<label id="scoreA"></label></h3>
-<h3 > overs:<label id="oversA"></label></h3>
-<h3 > last six balls:<label id="lastSixA"></label></h3>
-<div><h1>Team B</h1></div>
-<h3 > score:<label id="scoreB"></label></h3>
-<h3 > overs:<label id="oversB"></label></h3>
-<h3 > last six balls:<label id="lastSixB"></label></h3>
-<button onclick="enable()">Start/Stop</button>
+        <div>
+            <h1>Team A</h1>
+        </div>
+        <h3> score:<label id="scoreA"></label></h3>
+        <h3> overs:<label id="oversA"></label></h3>
+        <h3> run rate:<label id="runRateA"></label></h3>
+        
+        <h3> last six balls:<label id="lastSixA"></label></h3>
+        <div>
+            <h1>Team B</h1>
+        </div>
+        <h3> score:<label id="scoreB"></label></h3>
+        <h3> overs:<label id="oversB"></label></h3>
+        <h3> run rate:<label id="runRateB"></label></h3>
+        <h3> last six balls:<label id="lastSixB"></label></h3>
+        <button id="playButton"     onclick="enable()">Start</button>
     </div>
     <div id="result"></div>
     <!--
@@ -107,5 +128,6 @@ stopGame()
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-  </body>
+</body>
+
 </html>
