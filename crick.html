@@ -40,7 +40,7 @@
                     teamB.inningsCompleted = true;
                     clearInterval(timeout);
                     showResult();
-                   
+
                 }
                 if (item == "wd" || item == "nb") {
                     team[teamtype].runsScored = team[teamtype].runsScored + 1;
@@ -52,11 +52,17 @@
                         team[teamtype].inningsCompleted = true;
                         enable(1);
                         showResult();
-                        
+
                     }
                 } else {
                     team[teamtype].runsScored = team[teamtype].runsScored + item;
                     team[teamtype].ballsFaced = team[teamtype].ballsFaced + 1;
+                    if (teamB.runsScored > teamA.runsScored) {
+                        teamB.inningsCompleted = true;
+                        clearInterval(timeout);
+                        showResult();
+
+                    }
                 }
                 if (team[teamtype].ballsFaced == 120) {
                     clearInterval(timeout);
@@ -70,8 +76,8 @@
                 document.getElementById("scoreB").innerHTML = teamB.runsScored + "/" + teamB.wicketsDown;
                 document.getElementById("oversA").innerHTML = Math.floor(teamA.ballsFaced / 6) + "." + (teamA.ballsFaced % 6);
                 document.getElementById("oversB").innerHTML = Math.floor(teamB.ballsFaced / 6) + "." + (teamB.ballsFaced % 6);
-                document.getElementById("runRateA").innerHTML =isNaN(teamA.ballsFaced>5?( teamA.runsScored/(teamA.ballsFaced / 6)).toFixed(2):(teamA.runsScored*6/teamA.ballsFaced).toFixed(2))?"0":teamA.ballsFaced>5?( teamA.runsScored/(teamA.ballsFaced / 6)).toFixed(2):(teamA.runsScored*6/teamA.ballsFaced).toFixed(2);
-                document.getElementById("runRateB").innerHTML=isNaN(teamB.ballsFaced>5?( teamB.runsScored/(teamB.ballsFaced / 6)).toFixed(2):(teamB.runsScored*6/teamB.ballsFaced).toFixed(2))?"0":teamB.ballsFaced>5?( teamB.runsScored/(teamB.ballsFaced / 6)).toFixed(2):(teamB.runsScored*6/teamB.ballsFaced).toFixed(2);
+                document.getElementById("runRateA").innerHTML = isNaN(teamA.ballsFaced > 5 ? (teamA.runsScored / (teamA.ballsFaced / 6)).toFixed(2) : (teamA.runsScored * 6 / teamA.ballsFaced).toFixed(2)) ? "0" : teamA.ballsFaced > 5 ? (teamA.runsScored / (teamA.ballsFaced / 6)).toFixed(2) : (teamA.runsScored * 6 / teamA.ballsFaced).toFixed(2);
+                document.getElementById("runRateB").innerHTML = isNaN(teamB.ballsFaced > 5 ? (teamB.runsScored / (teamB.ballsFaced / 6)).toFixed(2) : (teamB.runsScored * 6 / teamB.ballsFaced).toFixed(2)) ? "0" : teamB.ballsFaced > 5 ? (teamB.runsScored / (teamB.ballsFaced / 6)).toFixed(2) : (teamB.runsScored * 6 / teamB.ballsFaced).toFixed(2);
 
             }, 1000)
         }
@@ -85,7 +91,7 @@
         }
         function enable(start) {
             const { teamA, teamB } = team;
-            document.getElementById("playButton").innerHTML = !statusX?"Start":"Stop";
+            document.getElementById("playButton").innerHTML = !statusX ? "Start" : "Stop";
             clearInterval(timeout)
             if (statusX || start)
                 startGame((teamA.inningsCompleted ? 'teamB' : 'teamA'))
@@ -106,7 +112,7 @@
         <h3> score:<label id="scoreA"></label></h3>
         <h3> overs:<label id="oversA"></label></h3>
         <h3> run rate:<label id="runRateA"></label></h3>
-        
+
         <h3> last six balls:<label id="lastSixA"></label></h3>
         <div>
             <h1>Team B</h1>
@@ -115,7 +121,7 @@
         <h3> overs:<label id="oversB"></label></h3>
         <h3> run rate:<label id="runRateB"></label></h3>
         <h3> last six balls:<label id="lastSixB"></label></h3>
-        <button id="playButton"     onclick="enable()">Start</button>
+        <button id="playButton" onclick="enable()">Start</button>
     </div>
     <div id="result"></div>
     <!--
